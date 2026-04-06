@@ -67,7 +67,7 @@ export default function TransactionsPage() {
   };
 
   return (
-    <main>
+    <div>
       <h1>Transactions</h1>
       <button onClick={handleSignOut}>Sign Out</button>
       <form onSubmit={handleSubmit}>
