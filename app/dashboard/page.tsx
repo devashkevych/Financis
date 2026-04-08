@@ -9,14 +9,13 @@ export default function DashboardPage() {
 
   const sessionRetrieve = async () => {
     try {
-      const { data, error } = await supabase.auth.getSession();
-      const { session } = data;
+      const { data: { user }, error } = await supabase.auth.getUser();
 
       if (error) {
         throw new Error(error.message);
       }
 
-      if (!session) {
+      if (!user) {
         router.push("/auth/login");
       }
     } catch (error) {
