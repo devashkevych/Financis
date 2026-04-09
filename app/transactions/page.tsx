@@ -4,18 +4,8 @@ import { supabase } from "@/lib/supabaseClient";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { User } from "@supabase/supabase-js";
-
-type TransactionType = "income" | "expense";
-
-interface Transaction {
-  id: number;
-  user_id: string;
-  created_at: string;
-  date: string;
-  amount: number;
-  type: TransactionType;
-  category: string;
-}
+import { TransactionType, Transaction } from "@/types/transactions";
+import TransactionCard from "@/components/TransactionCard";
 
 interface FormState {
   type: TransactionType;
@@ -29,14 +19,15 @@ export default function TransactionsPage() {
   const [form, setForm] = useState<FormState>({
     type: "expense",
     amount: "",
-    category: "",
+    category: "Food",
     date: new Date().toISOString().split("T")[0],
   });
 
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [isFetching, setIsFetching] = useState(false);
+  const [isFetching, setIsFetching] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [fetchingError, setFetchingError] = useState<string | null>(null);
+  const [submittingError, setSubmittingError] = useState<string | null>(null);
 
   const [user, setUser] = useState<User | null>(null);
 
@@ -46,6 +37,8 @@ export default function TransactionsPage() {
         data: { user },
         error,
       } = await supabase.auth.getUser();
+
+      console.log(user);
 
       if (error) {
         throw new Error(error.message);
@@ -71,7 +64,7 @@ export default function TransactionsPage() {
     if (!user) return;
 
     setIsFetching(true);
-    setError(null);
+    setFetchingError(null);
 
     const fetchTransactions = async () => {
       try {
@@ -85,7 +78,7 @@ export default function TransactionsPage() {
 
         setTransactions(data ?? []);
       } catch (err) {
-        setError("Failed to fetch transactions");
+        setFetchingError("Failed to fetch transactions");
         return;
       } finally {
         setIsFetching(false);
@@ -109,16 +102,19 @@ export default function TransactionsPage() {
     e.preventDefault();
 
     setIsSubmitting(true);
-    setError(null);
+    setSubmittingError(null);
 
     try {
       if (!user) {
-        setError("User not authenticated");
+        setSubmittingError("User not authenticated");
         return;
       }
 
       if (form.amount.trim() === "" || Number(form.amount) <= 0)
         throw new Error("Wrong amount. Please write amount more than 0");
+
+      if (form.category.trim() === "")
+        throw new Error("Wrong category. Please write right category");
 
       const payload = {
         user_id: user.id,
@@ -145,9 +141,9 @@ export default function TransactionsPage() {
       });
     } catch (error) {
       if (error instanceof Error) {
-        setError(error.message);
+        setSubmittingError(error.message);
       } else {
-        setError("Something went wrong");
+        setSubmittingError("Something went wrong");
       }
 
       console.error(error);
@@ -160,33 +156,49 @@ export default function TransactionsPage() {
     <div>
       <h1>Transactions</h1>
       <button onClick={handleSignOut}>Sign Out</button>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="flex flex-wrap gap-4 mt-8">
         {/* TYPE */}
-        <select
-          value={form.type}
-          onChange={(e) => {
-            setForm({ ...form, type: e.target.value as TransactionType });
-          }}
-        >
-          <option value="expense">Expense</option>
-          <option value="income">Income</option>
-        </select>
+        <div className="flex gap-4">
+          <label htmlFor="type">Type</label>
+          <select
+            id="type"
+            value={form.type}
+            onChange={(e) => {
+              setForm({ ...form, type: e.target.value as TransactionType });
+            }}
+          >
+            <option value="expense">Expense</option>
+            <option value="income">Income</option>
+          </select>
+        </div>
         {/* AMOUNT */}
-        <input
-          type="number"
-          value={form.amount}
-          onChange={(e) => {
-            setForm({ ...form, amount: e.target.value });
-          }}
-        />
+        <div className="flex gap-4">
+          <label htmlFor="amount">Amount</label>
+          <input
+            id="amount"
+            type="number"
+            value={form.amount}
+            onChange={(e) => {
+              setForm({ ...form, amount: e.target.value });
+            }}
+            placeholder="0.00"
+          />
+        </div>
         {/* Category */}
-        <input
-          type="text"
-          value={form.category}
-          onChange={(e) => {
-            setForm({ ...form, category: e.target.value });
-          }}
-        />
+        <div className="flex gap-4">
+          <label htmlFor="category">Category</label>
+          <select
+            id="category"
+            value={form.category}
+            onChange={(e) => {
+              setForm({ ...form, category: e.target.value });
+            }}
+          >
+            <option value="Food">Food</option>
+            <option value="Transport">Transport</option>
+            <option value="Rent">Rent</option>
+          </select>
+        </div>
         {/* Date */}
         <input
           type="date"
@@ -198,17 +210,17 @@ export default function TransactionsPage() {
         <button type="submit">Add</button>
       </form>
       {isFetching && <p>Loading your transactions...</p>}
-      {error && <p>{error}</p>}
-      {isSubmitting && <p>Submitting your transaction...</p>}
-      {!isFetching && !error && transactions.length > 0 && (
-        <ul>
+      {fetchingError && <p>{fetchingError}</p>}
+      {!isFetching && !fetchingError && transactions.length === 0 && (
+        <p>No transactions yet...</p>
+      )}
+      {submittingError && <p>{submittingError}</p>}
+      {}
+      {!isFetching && !fetchingError && transactions.length > 0 && (
+        <ul className="flex flex-col mt-4">
           {transactions.map((transaction) => (
             <li key={transaction.id}>
-              <div>
-                <p>{transaction.amount}</p>
-                <p>{transaction.created_at}</p>
-                <p>{transaction.category}</p>
-              </div>
+              <TransactionCard transaction={transaction} />
             </li>
           ))}
         </ul>
