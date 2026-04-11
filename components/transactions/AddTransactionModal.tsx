@@ -1,16 +1,16 @@
 import { useState } from "react";
-import { TransactionType } from "@/types/transactions";
+import { TransactionCategory, TransactionType } from "@/types/transactions";
 import { supabase } from "@/lib/supabaseClient";
 
 interface FormState {
   type: TransactionType;
   amount: string;
-  category: string;
+  category: TransactionCategory;
   date: string;
 }
 
 interface AddTransactionModalProps {
-  userId: string | undefined;
+  userId: string;
   onClose: () => void;
   onSuccess: () => Promise<void>;
 }
@@ -55,13 +55,13 @@ export default function AddTransactionModal({
 
       if (insertError) throw new Error(insertError.message);
 
+      await onSuccess();
       onClose();
-      onSuccess();
 
       setForm({
         type: "expense",
         amount: "",
-        category: "",
+        category: "Food",
         date: new Date().toISOString().split("T")[0],
       });
     } catch (error) {
@@ -76,7 +76,7 @@ export default function AddTransactionModal({
   };
 
   return (
-    <div className="absolute z-2 bg-slate-700 h-88 px-8  rounded-xl">
+    <div className="absolute z-50 bg-slate-700 h-88 px-8  rounded-xl">
       <form onSubmit={handleSubmit} className="flex flex-wrap gap-4 mt-8">
         {/* TYPE */}
         <div className="flex gap-4 border-b w-full">
@@ -112,7 +112,10 @@ export default function AddTransactionModal({
             id="category"
             value={form.category}
             onChange={(e) => {
-              setForm({ ...form, category: e.target.value });
+              setForm({
+                ...form,
+                category: e.target.value as TransactionCategory,
+              });
             }}
           >
             <option value="Food">Food</option>
@@ -132,7 +135,10 @@ export default function AddTransactionModal({
             }}
           />
         </div>
-        <button className="mx-auto px-8 py-4 rounded-xl bg-teal-700 mt-4" type="submit">
+        <button
+          className={`mx-auto px-8 py-4 rounded-xl mt-4 ${isSubmitting ? `bg-gray-400` : `bg-teal-700`}`}
+          type="submit"
+        >
           Add
         </button>
       </form>
