@@ -21,7 +21,7 @@ export default function AddTransactionModal({
   onSuccess,
 }: AddTransactionModalProps) {
   const [form, setForm] = useState<FormState>({
-    type: "expense",
+    type: "Expense",
     amount: "",
     category: "Food",
     date: new Date().toISOString().split("T")[0],
@@ -59,7 +59,7 @@ export default function AddTransactionModal({
       onClose();
 
       setForm({
-        type: "expense",
+        type: "Expense",
         amount: "",
         category: "Food",
         date: new Date().toISOString().split("T")[0],
@@ -138,6 +138,7 @@ export default function AddTransactionModal({
         <button
           className={`mx-auto px-8 py-4 rounded-xl mt-4 ${isSubmitting ? `bg-gray-400` : `bg-teal-700`}`}
           type="submit"
+          disabled={isSubmitting}
         >
           Add
         </button>

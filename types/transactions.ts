@@ -1,4 +1,4 @@
-export type TransactionType = "income" | "expense";
+export type TransactionType = "Income" | "Expense";
 
 export type TransactionCategory = "Food" | "Transport" | "Rent";
 
