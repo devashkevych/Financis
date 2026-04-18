@@ -1,34 +1,41 @@
 import { useState } from "react";
-import { TransactionCategory, TransactionType } from "@/types/transactions";
-import { supabase } from "@/lib/supabaseClient";
+import { TransactionCategory, TransactionType } from "@/lib/types/transactions";
+import createTransaction from "../../../lib/services/createTransaction";
 
-interface FormState {
+type FormState = {
   type: TransactionType;
   amount: string;
   category: TransactionCategory;
   date: string;
-}
+};
 
-interface AddTransactionModalProps {
+type AddTransactionModalProps = {
   userId: string;
   onClose: () => void;
   onSuccess: () => Promise<void>;
-}
+};
 
 export default function AddTransactionModal({
   userId,
   onClose,
   onSuccess,
 }: AddTransactionModalProps) {
-  const [form, setForm] = useState<FormState>({
+  const INITIAL_FORM: FormState = {
     type: "Expense",
     amount: "",
     category: "Food",
     date: new Date().toISOString().split("T")[0],
-  });
+  };
+
+  const [form, setForm] = useState<FormState>(INITIAL_FORM);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submittingError, setSubmittingError] = useState<string | null>(null);
+
+  const validateForm = (form: FormState): string | null =>
+    form.amount.trim() === "" || Number(form.amount) <= 0
+      ? "Wrong amount. Please write amount more than 0"
+      : null;
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -37,8 +44,8 @@ export default function AddTransactionModal({
     setSubmittingError(null);
 
     try {
-      if (form.amount.trim() === "" || Number(form.amount) <= 0)
-        throw new Error("Wrong amount. Please write amount more than 0");
+      const validationError = validateForm(form);
+      if (validationError) return setSubmittingError(validationError);
 
       const payload = {
         user_id: userId,
@@ -48,22 +55,14 @@ export default function AddTransactionModal({
         category: form.category,
       };
 
-      const { data: insertData, error: insertError } = await supabase
-        .from("Transactions")
-        .insert([payload])
-        .select();
+      const { error: insertError } = await createTransaction(payload);
 
       if (insertError) throw new Error(insertError.message);
 
       await onSuccess();
       onClose();
 
-      setForm({
-        type: "Expense",
-        amount: "",
-        category: "Food",
-        date: new Date().toISOString().split("T")[0],
-      });
+      setForm(INITIAL_FORM);
     } catch (error) {
       if (error instanceof Error) {
         setSubmittingError(error.message);
@@ -88,8 +87,8 @@ export default function AddTransactionModal({
               setForm({ ...form, type: e.target.value as TransactionType });
             }}
           >
-            <option value="expense">Expense</option>
-            <option value="income">Income</option>
+            <option value="Expense">Expense</option>
+            <option value="Income">Income</option>
           </select>
         </div>
         {/* AMOUNT */}

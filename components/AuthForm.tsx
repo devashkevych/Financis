@@ -8,9 +8,6 @@ type AuthFormProps = {
 };
 
 export default function AuthForm({ authAction, title }: AuthFormProps) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -19,6 +16,15 @@ export default function AuthForm({ authAction, title }: AuthFormProps) {
 
     setLoading(true);
     setError(null);
+
+    const formData = new FormData(e.currentTarget);
+
+    const email = formData.get("email");
+    const password = formData.get("password");
+
+    if (typeof email !== "string" || typeof password !== "string") {
+      throw new Error("Invalid form data");
+    }
 
     try {
       await authAction(email, password);
@@ -37,24 +43,12 @@ export default function AuthForm({ authAction, title }: AuthFormProps) {
     <form onSubmit={handleSubmit}>
       <div>
         <label htmlFor="email">Email</label>
-        <input
-          type="email"
-          id="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
+        <input type="email" id="email" name="email" required />
       </div>
 
       <div>
         <label htmlFor="password">Password</label>
-        <input
-          type="password"
-          id="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
+        <input type="password" id="password" name="password" required />
       </div>
 
       <button type="submit" disabled={loading}>

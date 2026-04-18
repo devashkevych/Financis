@@ -4,107 +4,25 @@ import { supabase } from "@/lib/supabaseClient";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { User } from "@supabase/supabase-js";
-import { Transaction } from "@/types/transactions";
-import TransactionCard from "@/components/transactions/TransactionCard";
-import AddTransactionModal from "@/components/transactions/AddTransactionModal";
+import TransactionCard from "@/features/transactions/components/TransactionCard";
+import AddTransactionModal from "@/features/transactions/components/AddTransactionModal";
+import useTransactions from "@/features/transactions/hooks/useTransactions";
+import { useRequireAuth } from "@/lib/hooks/useRequireAuth";
 
 export default function TransactionsPage() {
   const router = useRouter();
 
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [isFetching, setIsFetching] = useState(true);
-  const [fetchingError, setFetchingError] = useState<string | null>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [deletingError, setDeletingError] = useState<string | null>(null);
+  const { user } = useRequireAuth();
 
-  const [user, setUser] = useState<User | null>(null);
-
-  const sessionRetrieve = async () => {
-    try {
-      const {
-        data: { user },
-        error,
-      } = await supabase.auth.getUser();
-
-      if (error) {
-        throw new Error(error.message);
-      }
-
-      if (!user) {
-        router.push("/auth/login");
-        return;
-      }
-
-      setUser(user);
-    } catch (error) {
-      console.error(error);
-      router.push("/auth/login");
-    }
-  };
-
-  useEffect(() => {
-    sessionRetrieve();
-  }, []);
-
-  const fetchTransactions = async () => {
-    if (!user) return;
-
-    setIsFetching(true);
-    setFetchingError(null);
-
-    try {
-      const { data, error } = await supabase
-        .from("Transactions")
-        .select("*")
-        .eq("user_id", user.id)
-        .order("date", { ascending: false });
-
-      if (error) throw error;
-
-      setTransactions(data ?? []);
-    } catch (err) {
-      setFetchingError("Failed to fetch transactions");
-      return;
-    } finally {
-      setIsFetching(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchTransactions();
-  }, [user]);
-
-  const deleteTransaction = async (id: number) => {
-    try {
-      setTransactions((prev) =>
-        prev.filter((transaction) => {
-          return transaction.id !== id;
-        }),
-      );
-
-      const { data, error } = await supabase
-        .from("Transactions")
-        .delete()
-        .eq("id", id)
-        .select();
-
-      if (error) {
-        await fetchTransactions();
-        throw new Error(error.message);
-      }
-
-      if (!data || data.length === 0) {
-        await fetchTransactions();
-        throw new Error("Transaction was not deleted");
-      }
-    } catch (err) {
-      if (err instanceof Error) {
-        setDeletingError(err.message);
-      } else {
-        setDeletingError("Something went wrong");
-      }
-    }
-  };
+  const {
+    transactions,
+    isFetching,
+    fetchingError,
+    fetchTransactions,
+    deleteTransaction,
+    deletingError,
+  } = useTransactions(user?.id);
 
   const handleSignOut = async () => {
     const { error } = await supabase.auth.signOut();

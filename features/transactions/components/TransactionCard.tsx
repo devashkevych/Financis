@@ -1,9 +1,9 @@
-import { Transaction } from "@/types/transactions";
+import { Transaction } from "@/lib/types/transactions";
 
-interface TransactionCardProps {
+type TransactionCardProps = {
   transaction: Transaction;
   onDelete: (id: number) => Promise<void>;
-}
+};
 
 export default function TransactionCard({
   transaction,
