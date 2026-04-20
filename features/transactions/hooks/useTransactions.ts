@@ -38,18 +38,19 @@ export default function useTransactions(userId?: string) {
   };
 
   const deleteTransaction = async (id: number) => {
+    const prevTransactions = transactions;
+
     try {
       filterTransactions(id);
-
       const { data, error } = await deleteTransactionById(id);
 
       if (error) {
-        await fetchTransactions();
+        setTransactions(prevTransactions);
         throw new Error(error.message);
       }
 
       if (!data || data.length === 0) {
-        await fetchTransactions();
+        setTransactions(prevTransactions);
         throw new Error("Transaction was not deleted");
       }
     } catch (err) {

@@ -22,11 +22,10 @@ export default function AuthForm({ authAction, title }: AuthFormProps) {
     const email = formData.get("email");
     const password = formData.get("password");
 
-    if (typeof email !== "string" || typeof password !== "string") {
-      throw new Error("Invalid form data");
-    }
-
     try {
+      if (typeof email !== "string" || typeof password !== "string") {
+        throw new Error("Invalid form data");
+      }
       await authAction(email, password);
     } catch (e: any) {
       if (e instanceof Error) {

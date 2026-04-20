@@ -5,7 +5,8 @@ export default async function getTransactions(userId: string) {
     .from("Transactions")
     .select("*")
     .eq("user_id", userId)
-    .order("date", { ascending: false });
+    .order("date", { ascending: false })
+    .order("created_at", { ascending: false });
 
   return { data, error };
 }
