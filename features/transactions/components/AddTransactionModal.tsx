@@ -75,7 +75,7 @@ export default function AddTransactionModal({
   };
 
   return (
-    <div className="absolute z-50 bg-slate-700 h-88 px-8  rounded-xl">
+    <div className="absolute z-60 bg-slate-700 h-88 px-8  rounded-xl">
       <form onSubmit={handleSubmit} className="flex flex-wrap gap-4 mt-8">
         {/* TYPE */}
         <div className="flex gap-4 border-b w-full">
