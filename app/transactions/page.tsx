@@ -2,33 +2,27 @@
 
 import { supabase } from "@/lib/supabaseClient";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-
+import { useEffect, useState } from "react";
+import { User } from "@supabase/supabase-js";
+import TransactionCard from "@/features/transactions/components/TransactionCard";
+import AddTransactionModal from "@/features/transactions/components/AddTransactionModal";
+import useTransactions from "@/features/transactions/hooks/useTransactions";
+import { useRequireAuth } from "@/lib/hooks/useRequireAuth";
 
 export default function TransactionsPage() {
   const router = useRouter();
 
-  const sessionRetrieve = async () => {
-    try {
-      const { data, error } = await supabase.auth.getSession();
-      const { session } = data;
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const { user } = useRequireAuth();
 
-      if (error) {
-        throw new Error(error.message);
-      }
-
-      if (!session) {
-        router.push("/auth/login");
-      }
-    } catch (error) {
-      console.error(error);
-      router.push("/auth/login");
-    }
-  };
-
-  useEffect(() => {
-    sessionRetrieve();
-  }, [router]);
+  const {
+    transactions,
+    isFetching,
+    fetchingError,
+    fetchTransactions,
+    deleteTransaction,
+    deletingError,
+  } = useTransactions(user?.id);
 
   const handleSignOut = async () => {
     const { error } = await supabase.auth.signOut();
@@ -40,11 +34,46 @@ export default function TransactionsPage() {
     router.push("/auth/login");
   };
 
-
   return (
-    <div>
+    <div className="relative min-h-screen">
+      {isAddModalOpen && user && (
+        <AddTransactionModal
+          userId={user?.id}
+          onClose={() => {
+            setIsAddModalOpen(false);
+          }}
+          onSuccess={fetchTransactions}
+        />
+      )}
       <h1>Transactions</h1>
       <button onClick={handleSignOut}>Sign Out</button>
+      <button
+        className="border rounded p-4"
+        onClick={() => {
+          setIsAddModalOpen(true);
+        }}
+      >
+        +
+      </button>
+
+      {deletingError && <p>{deletingError}</p>}
+      {isFetching && <p>Loading your transactions...</p>}
+      {fetchingError && <p>{fetchingError}</p>}
+      {!isFetching && !fetchingError && transactions.length === 0 && (
+        <p>No transactions yet...</p>
+      )}
+      {!isFetching && !fetchingError && transactions.length > 0 && (
+        <ul className="flex flex-col mt-4">
+          {transactions.map((transaction) => (
+            <li key={transaction.id}>
+              <TransactionCard
+                transaction={transaction}
+                onDelete={deleteTransaction}
+              />
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
