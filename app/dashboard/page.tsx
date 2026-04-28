@@ -5,7 +5,6 @@ import { supabase } from "@/lib/supabaseClient";
 import { useRouter } from "next/navigation";
 import calculateTransactionSummary from "@/features/dashboard/utils/calculateTransactionSummary";
 import useTransactions from "@/features/transactions/hooks/useTransactions";
-import TransactionCard from "@/features/transactions/components/TransactionCard";
 
 export default function DashboardPage() {
   const { user, isLoading: authLoading } = useRequireAuth();
@@ -13,7 +12,7 @@ export default function DashboardPage() {
   const {
     transactions,
     isFetching: transactionsLoading,
-    deleteTransaction,
+    fetchingError,
   } = useTransactions(user?.id);
 
   const isLoading = authLoading || transactionsLoading;
@@ -38,18 +37,28 @@ export default function DashboardPage() {
       <h1>Dashboard</h1>
       <button onClick={handleSignOut}>Sign Out</button>
       {isLoading && <p>Loading...</p>}
-      {!isLoading && (
+
+      {!isLoading && fetchingError && <p>{fetchingError}</p>}
+
+      {!isLoading && !fetchingError && (
         <div>
           <div>Total Balance: {totalBalance}</div>
           <div>Total Incomes: {totalIncomes}</div>
           <div>Total Expenses: {totalExpenses}</div>
-          {latestTransactions.map((t) => (
-            <TransactionCard
-              key={t.id}
-              transaction={t}
-              onDelete={deleteTransaction}
-            />
-          ))}
+          {latestTransactions.length === 0 ? (
+            <p>No transactions yet</p>
+          ) : (
+            <ul>
+              {latestTransactions.map((t) => (
+                <li key={t.id}>
+                  <span>{t.amount}</span>
+                  <span>{t.date}</span>
+                  <span>{t.type}</span>
+                  <span>{t.category}</span>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       )}
     </div>
