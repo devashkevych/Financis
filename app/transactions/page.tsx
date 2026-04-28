@@ -2,8 +2,7 @@
 
 import { supabase } from "@/lib/supabaseClient";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { User } from "@supabase/supabase-js";
+import { useState } from "react";
 import TransactionCard from "@/features/transactions/components/TransactionCard";
 import AddTransactionModal from "@/features/transactions/components/AddTransactionModal";
 import useTransactions from "@/features/transactions/hooks/useTransactions";
