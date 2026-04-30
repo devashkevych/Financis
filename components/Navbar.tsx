@@ -1,13 +1,19 @@
-'use client'
+"use client";
 
 import Link from "next/link";
+import { useUser } from "@/lib/context/UserContext";
 
 export default function Navbar() {
+  const { user } = useUser();
+  const isLogged = !!user;
+
   return (
-    <nav className="fixed z-1 bottom-0 w-dvw md:static md:top-0">
+    <nav
+      className={
+        isLogged ? `fixed z-1 bottom-0 w-dvw md:static md:top-0 w-full` : "hidden"
+      }
+    >
       <div className="flex gap-8 pb-4 justify-around">
-        <Link href="/auth/login">Log In</Link>
-        <Link href="/auth/signup">Sign Up</Link>
         <Link href="/transactions">Transactions</Link>
         <Link href="/dashboard">Dashboard</Link>
       </div>

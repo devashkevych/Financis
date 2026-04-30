@@ -1,6 +1,6 @@
 "use client";
 
-import AuthForm from "@/components/AuthForm";
+import AuthForm from "@/features/auth/components/AuthForm";
 import { supabase } from "@/lib/supabaseClient";
 import { useRouter } from "next/navigation";
 
@@ -22,7 +22,7 @@ export default function LoginPage() {
 
   return (
     <div>
-      <AuthForm authAction={loginUser} title="Log In" />
+      <AuthForm authAction={loginUser} title="Log In" mode="login" />
     </div>
   );
 }
