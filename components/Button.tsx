@@ -1,5 +1,5 @@
 type ButtonProps = {
-  loading: boolean;
+  loading?: boolean;
   title: string;
   type: "submit" | "reset" | "button" | undefined;
 };
