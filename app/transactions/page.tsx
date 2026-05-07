@@ -52,9 +52,11 @@ export default function TransactionsPage() {
         <h2 className="border-b border-gray-600 w-3/4 text-center text-4xl font-bold pb-4 mt-4">
           Financis
         </h2>
-        <button onClick={handleSignOut}>Sign Out</button>
+        <button className="cursor-pointer" onClick={handleSignOut}>
+          Sign Out
+        </button>
         <button
-          className="fixed bg-[#763DA8] text-xl font-bold rounded border border-gray-600 p-4 bottom-16 right-12 size-16 active:bg-[#673296] active:border-[#592685]"
+          className="fixed bg-[#763DA8] text-xl font-bold rounded border border-gray-600 p-4 bottom-16 right-12 size-16 cursor-pointer active:bg-[#673296] active:border-[#592685]"
           onClick={() => {
             setIsAddModalOpen(true);
           }}
@@ -69,10 +71,13 @@ export default function TransactionsPage() {
           <p>No transactions yet...</p>
         )}
         {!isFetching && !fetchingError && transactions.length > 0 && (
-          <ul className="flex flex-col mt-4 gap-8">
+          <ul className="flex flex-col mt-4 gap-8 w-full">
             {groupedTransactions.map(([date, trans]) => (
-              <div key={date} className="flex flex-col gap-4">
-                <div>{date}</div>
+              <div
+                key={date}
+                className="flex flex-col gap-2 border-b border-gray-600 "
+              >
+                <div className="pl-6">{date}</div>
                 <div>
                   {" "}
                   {trans.map((transaction) => (
