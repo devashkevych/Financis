@@ -20,6 +20,8 @@ export const EXPENSE_CATEGORIES = [
 export type IncomeCategory = (typeof INCOME_CATEGORIES)[number];
 export type ExpenseCategory = (typeof EXPENSE_CATEGORIES)[number];
 
+export type TransactionCategory = IncomeCategory | ExpenseCategory;
+
 type BaseTransaction = {
   id: number;
   user_id: string;
