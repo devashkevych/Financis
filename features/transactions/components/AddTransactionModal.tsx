@@ -1,11 +1,17 @@
 import { useState } from "react";
-import { TransactionCategory, TransactionType } from "@/lib/types/transactions";
+import {
+  ExpenseCategory,
+  IncomeCategory,
+  TransactionType,
+  EXPENSE_CATEGORIES,
+  INCOME_CATEGORIES,
+} from "@/lib/types/transactions";
 import createTransaction from "../../../lib/services/createTransaction";
 
 type FormState = {
   type: TransactionType;
   amount: string;
-  category: TransactionCategory;
+  category: ExpenseCategory | IncomeCategory;
   date: string;
 };
 
@@ -75,7 +81,7 @@ export default function AddTransactionModal({
   };
 
   return (
-    <div className="absolute z-60 bg-slate-700 h-88 px-8  rounded-xl">
+    <div className="fixed inset-0 m-8 z-60 bg-slate-700 h-88 px-8 rounded-xl">
       <form onSubmit={handleSubmit} className="flex flex-wrap gap-4 mt-8">
         {/* TYPE */}
         <div className="flex gap-4 border-b w-full">
@@ -84,7 +90,13 @@ export default function AddTransactionModal({
             id="type"
             value={form.type}
             onChange={(e) => {
-              setForm({ ...form, type: e.target.value as TransactionType });
+              const newType = e.target.value as TransactionType;
+
+              setForm({
+                ...form,
+                type: newType,
+                category: newType === "Expense" ? "Food" : "Salary",
+              });
             }}
           >
             <option value="Expense">Expense</option>
@@ -113,13 +125,25 @@ export default function AddTransactionModal({
             onChange={(e) => {
               setForm({
                 ...form,
-                category: e.target.value as TransactionCategory,
+                category: e.target.value as ExpenseCategory | IncomeCategory,
               });
             }}
           >
-            <option value="Food">Food</option>
-            <option value="Transport">Transport</option>
-            <option value="Rent">Rent</option>
+            {form.type === "Expense"
+              ? EXPENSE_CATEGORIES.map((cat) => {
+                  return (
+                    <option key={cat} value={cat}>
+                      {cat}
+                    </option>
+                  );
+                })
+              : INCOME_CATEGORIES.map((cat) => {
+                  return (
+                    <option key={cat} value={cat}>
+                      {cat}
+                    </option>
+                  );
+                })}
           </select>
         </div>
         {/* Date */}

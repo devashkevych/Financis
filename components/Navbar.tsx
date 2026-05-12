@@ -11,7 +11,7 @@ export default function Navbar() {
     <nav
       className={
         isLogged
-          ? `fixed z-1 bottom-0 w-dvw md:static md:top-0 w-full bg-[#231c2c] pt-4`
+          ? `fixed z-1 bottom-0 left-0 w-dvw md:static md:top-0 w-full bg-[#231c2c] pt-4`
           : "hidden"
       }
     >

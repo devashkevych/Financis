@@ -51,7 +51,7 @@ export default function DashboardPage() {
       {!isLoading && fetchingError && <p>{fetchingError}</p>}
       {!isLoading && !fetchingError && (
         <div className="w-full">
-          <div className="flex flex-col bg-zinc-600 w-fit p-4 rounded-xl font-bold text-lg">
+          <div className="flex flex-col border w-fit p-4 rounded-xl font-bold text-lg">
             Total Balance:{" "}
             <span
               className={
@@ -64,7 +64,7 @@ export default function DashboardPage() {
             </span>
           </div>
           <div className="flex flex-col items-center pt-8">
-            <div className="flex gap-4 border w-fit p-4 rounded-xl text-lg font-bold">
+            <div className="flex gap-4 border w-fit p-4 rounded-xl text-md font-semibold mb-4">
               <div className="flex flex-col items-center border-r pr-4">
                 Incomes{" "}
                 <span
