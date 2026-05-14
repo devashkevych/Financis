@@ -11,8 +11,8 @@ export default function TransactionCard({
 }: TransactionCardProps) {
   return (
     <div className="flex justify-between border-t border-gray-600 py-2 px-4 md:mx-16 gap-8">
-      <p>{transaction.category}</p>
-      <div className="flex gap-4">
+      <p className="font-bold">{transaction.category}</p>
+      <div className="flex gap-4 font-semibold">
         <p
           className={
             transaction.type === "Expense" ? "text-red-500" : "text-green-500"

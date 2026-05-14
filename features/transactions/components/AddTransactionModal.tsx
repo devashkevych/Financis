@@ -81,14 +81,45 @@ export default function AddTransactionModal({
   };
 
   return (
-    <div className="fixed inset-0 m-8 z-60 bg-slate-700 h-88 px-8 rounded-xl">
+    <div className="fixed inset-0 m-4 z-60 bg-slate-700 px-8 h-8/10 rounded-xl flex flex-col">
       <form onSubmit={handleSubmit} className="flex flex-wrap gap-4 mt-8">
+      <h1 className="my-8 text-xl font-semibold">Add Transaction</h1>
+        {/* AMOUNT */}
+        <div className="flex flex-col w-full">
+          <label htmlFor="amount" className="ml-3 mb-2">
+            Amount
+          </label>
+          <input
+            id="amount"
+            type="number"
+            className="border-b
+              bg-[#2f2f2f]
+              text-white
+              rounded-md
+              outline-none
+              border border-[#3a3a3a]
+              p-4"
+            value={form.amount}
+            onChange={(e) => {
+              setForm({ ...form, amount: e.target.value });
+            }}
+            placeholder="$0.00"
+          />
+        </div>
         {/* TYPE */}
-        <div className="flex gap-4 border-b w-full">
-          <label htmlFor="type">Type:</label>
+        <div className="flex flex-col w-full">
+          <label htmlFor="type" className="ml-3 mb-2">
+            Type
+          </label>
           <select
             id="type"
             value={form.type}
+            className="bg-[#2f2f2f]
+              text-white
+              rounded-md
+              outline-none
+              border border-[#3a3a3a]
+              p-4"
             onChange={(e) => {
               const newType = e.target.value as TransactionType;
 
@@ -103,25 +134,20 @@ export default function AddTransactionModal({
             <option value="Income">Income</option>
           </select>
         </div>
-        {/* AMOUNT */}
-        <div className="flex gap-4 border-b w-full">
-          <label htmlFor="amount">Amount:</label>
-          <input
-            id="amount"
-            type="number"
-            value={form.amount}
-            onChange={(e) => {
-              setForm({ ...form, amount: e.target.value });
-            }}
-            placeholder="0.00"
-          />
-        </div>
         {/* Category */}
-        <div className="flex gap-4 border-b w-full">
-          <label htmlFor="category">Category:</label>
+        <div className="flex flex-col w-full">
+          <label htmlFor="category" className="ml-3 mb-2">
+            Category
+          </label>
           <select
             id="category"
             value={form.category}
+            className="bg-[#2f2f2f]
+              text-white
+              rounded-md
+              outline-none
+              border border-[#3a3a3a]
+              p-4"
             onChange={(e) => {
               setForm({
                 ...form,
@@ -147,11 +173,19 @@ export default function AddTransactionModal({
           </select>
         </div>
         {/* Date */}
-        <div className="flex w-full gap-4 border-b">
-          <label htmlFor="date">Date:</label>
+        <div className="flex flex-col w-full">
+          <label htmlFor="date" className="ml-3 mb-2">
+            Date
+          </label>
           <input
             id="date"
             type="date"
+            className="bg-[#2f2f2f]
+              text-white
+              rounded-md
+              outline-none
+              border border-[#3a3a3a]
+              p-4"
             value={form.date}
             onChange={(e) => {
               setForm({ ...form, date: e.target.value });

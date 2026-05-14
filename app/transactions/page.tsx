@@ -48,7 +48,7 @@ export default function TransactionsPage() {
           onSuccess={fetchTransactions}
         />
       )}
-      <div className="flex flex-col justify-center items-center gap-8">
+      <div className="flex flex-col justify-center items-center gap-8 mb-32">
         <h2 className="border-b border-gray-600 w-3/4 text-center text-4xl font-bold pb-4 mt-4">
           Financis
         </h2>
@@ -77,7 +77,7 @@ export default function TransactionsPage() {
                 key={date}
                 className="flex flex-col gap-2 border-b border-gray-600 "
               >
-                <div className="pl-6">{date}</div>
+                <div className="pl-6 font-medium">{date}</div>
                 <div>
                   {" "}
                   {trans.map((transaction) => (

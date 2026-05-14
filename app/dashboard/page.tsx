@@ -51,19 +51,19 @@ export default function DashboardPage() {
       {!isLoading && fetchingError && <p>{fetchingError}</p>}
       {!isLoading && !fetchingError && (
         <div className="w-full">
-          <div className="flex flex-col border w-fit p-4 rounded-xl font-bold text-lg">
-            Total Balance:{" "}
-            <span
-              className={
-                totalBalance <= 0
-                  ? "text-red-500 text-2xl"
-                  : "text-green-500 text-2xl"
-              }
-            >
-              ${totalBalance}
-            </span>
-          </div>
-          <div className="flex flex-col items-center pt-8">
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col border w-fit p-4 rounded-xl font-bold text-lg">
+              Total Balance:{" "}
+              <span
+                className={
+                  totalBalance <= 0
+                    ? "text-red-500 text-2xl"
+                    : "text-green-500 text-2xl"
+                }
+              >
+                ${totalBalance}
+              </span>
+            </div>
             <div className="flex gap-4 border w-fit p-4 rounded-xl text-md font-semibold mb-4">
               <div className="flex flex-col items-center border-r pr-4">
                 Incomes{" "}
@@ -86,6 +86,8 @@ export default function DashboardPage() {
                 </span>
               </div>
             </div>
+          </div>
+          <div className="flex flex-col items-center">
             {latestTransactions.length === 0 ? (
               <p>No transactions yet</p>
             ) : (
@@ -93,7 +95,7 @@ export default function DashboardPage() {
                 {groupedTransactions.map(([date, trans]) => (
                   <div
                     key={date}
-                    className="flex flex-col gap-2 border-b border-gray-600 "
+                    className="flex flex-col gap-2 border-b border-gray-600 font-semibold"
                   >
                     <div className="pl-6">{date}</div>
                     <div>
