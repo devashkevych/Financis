@@ -24,16 +24,6 @@ export default function TransactionsPage() {
     deletingError,
   } = useTransactions(user?.id);
 
-  const handleSignOut = async () => {
-    const { error } = await supabase.auth.signOut();
-
-    if (error) {
-      throw new Error(error.message);
-    }
-
-    router.push("/auth/login");
-  };
-
   const groupedTransactions = Object.entries(groupTransactions(transactions));
   console.log(Object.values(groupedTransactions));
 
@@ -50,13 +40,10 @@ export default function TransactionsPage() {
       )}
       <div className="flex flex-col justify-center items-center gap-8 mb-32">
         <h2 className="border-b border-gray-600 w-3/4 text-center text-4xl font-bold pb-4 mt-4">
-          Financis
+          Transactions
         </h2>
-        <button className="cursor-pointer" onClick={handleSignOut}>
-          Sign Out
-        </button>
         <button
-          className="fixed bg-[#763DA8] text-xl font-bold rounded border border-gray-600 p-4 bottom-16 right-12 size-16 cursor-pointer active:bg-[#673296] active:border-[#592685]"
+          className="fixed bg-[#763DA8] text-xl font-bold rounded border border-gray-600 p-4 bottom-18 right-10 size-14 cursor-pointer active:bg-[#673296] active:border-[#592685] z-70"
           onClick={() => {
             setIsAddModalOpen(true);
           }}
